@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>To do Task</title>
+</head>
+<body>
+    <h1>To do List</h1>
+    <div id='enterModal' class="taskCreater">
+        <h2 id="enterH2">Войти:</h2>
+        <p id="enterMessage" style="display: none;">Логин или пароль внесены неверно.<br>Возможно, Вам необходимо пройти регистрацию!</p>
+        <p id="wrongLogin" style="display: none;">Пользователь с таким именем уже существует</p>
+        <p id="successMessage" style="display: none;">Регистрация прошла успешно. <br>Выполните вход.</p>
+        <input id='login' type="text" placeholder="Логин">
+        <input id="password" type="password" placeholder="Пароль">
+        <p id='wrongPassword' style="display: none;">Пароли не совпадают, попробуйте еще раз</p>
+        <input id="passwordTwo" type="password" placeholder="Повторите пароль" style="display: none;">
+        <a id="registration" href="#">Регистрация</a>
+        <div id='enterButtons'>
+        <button id='enter'>Войти</button>
+        <button id="create" style="display: none;">Зарегистрироваться</button>
+        <button id='back' style='display: none;'>Назад</button>
+        </div>
+    </div>
+    <div class="deleteModal taskCreaterContainer" style="display: none;">
+    <div class="taskCreater">
+        <h2>Вы уверены, что хотите удалить задачу?</h2>
+        <div>
+            <button class="deleteTaskButton">Удалить</button>
+            <button class="cancelDeleteTask">Отмена</button>
+        </div>
+    </div>
+</div>
+    <div id='root'></div>
+    <script src="to-do-task.js"></script>
+</body>
+</html>

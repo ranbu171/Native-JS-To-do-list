@@ -1,0 +1,363 @@
+@font-face {
+    font-family: 'Gilroy';
+    src: local('Gilroy'),
+         url('fonts/fonts/Gilroy-Regular.ttf') format('truetype'),
+         url('fonts/fonts/Gilroy-Regular.eot?#iefix') format('embedded-opentype'),
+         url('fonts/fonts/Gilroy-Regular.woff') format('woff'); 
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* Light */
+
+@font-face {
+    font-family: 'Gilroy';
+    src: local('Gilroy'),
+         url('fonts/fonts/Gilroy-Light.ttf') format('truetype'),
+         url('fonts/fonts/Gilroy-Light.eot?#iefix') format('embedded-opentype'),
+         url('.fonts/fonts/Gilroy-Light.woff') format('woff'); 
+    font-weight: 300;
+    font-style: normal;
+}
+
+
+* {
+    font-family: "Gilroy";
+}
+
+body {
+    margin: 0;
+    background: url(double-bubble-outline.png);
+}
+
+h1 {
+    text-align: center;
+}
+
+#enterMessage {
+    font-size: 12px;
+    color: brown;
+}
+#registration {
+    display: inline-block;
+    margin: 0 30px;
+    margin-bottom: 20px;
+    text-decoration: none;
+}
+
+
+.taskCreaterContainer {
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0.322);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.taskCreater {
+    padding: 20px;
+    width: 35%;
+    margin: 3% auto;
+    text-align: center;
+    background-color: white;
+    border: 2px solid rgb(89, 171, 226);
+    border-radius: 10px;
+    box-shadow: 0 5px 8px 0 rgba(0,0,0,0.2),0 7px 20px 0 rgba(0,0,0,0.17);
+}
+
+input {
+    box-sizing: border-box;
+    padding: 5px;
+    height: 30px;
+    width: 70%;
+    margin: 0 auto;
+    border-radius: 7px;
+    border: 1px solid rgb(89, 171, 226);
+    /* margin-top: 20px; */
+    margin-bottom: 20px;
+}
+
+.taskBody {
+    border-radius: 7px;
+    border: 1px solid rgb(89, 171, 226);
+    width: 70%;
+    height: 120px;
+    padding: 10px 5px;
+    box-sizing: border-box;
+    background-color: #f8f8f8;
+    resize: none;
+}
+
+.taskPriority {
+    padding: 4px;
+    margin-left: 10px;
+    /* appearance: none; */
+    /* width: 100px; */
+    height:  30px;
+    border-radius: 7px;
+    border: 2px solid rgb(89, 171, 226);
+}
+
+option:hover {
+    color: green
+}
+
+button {
+    border-radius: 7px;
+    border: 1px solid rgb(89, 171, 226);
+    height: 30px;
+    padding: 0 10px 0;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+button:hover {
+    background-color: rgb(142, 194, 230);
+}
+button:active {
+    background-color: rgb(75, 162, 224);
+
+}
+
+#root {
+    display: grid;
+    /* grid-template-columns: minmax(300px, 400px); */
+    grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
+    grid-auto-rows: 110px;
+    /* grid-auto-columns: minmax(100px, 300px); */
+    grid-column-gap: 20px;
+    grid-row-gap: 20px;
+    margin: 0 auto;
+    margin-top: 20px;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 5px 5px 0 rgba(0,0,0,0.1),0 7px 15px 0 rgba(0,0,0,0.1);
+    width: 80%;
+    background-color: rgba(165, 164, 164, 0.61);
+    min-height: 300px;
+}
+
+.gridBlock {
+    position: relative;
+    border-radius: 10px;
+    background-color: white;
+    border: 1px solid white;
+
+    box-shadow: 2px 2px 2px 0 rgba(0,0,0,0.1);
+}
+.gridBlock:hover {
+    border: 1px solid rgb(89, 171, 226);
+    box-shadow: none;
+
+}
+
+.name {
+    margin: 10px;
+    
+    padding: 5px;
+    font-size: 16px;
+    margin-left: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.name::first-letter {
+    text-transform: uppercase;
+}
+.body::first-letter {
+    text-transform: uppercase;
+}
+.name-actived {
+    font-size: 14px;
+    word-wrap: break-word;
+    overflow: unset;
+    white-space: normal;
+    text-overflow: unset;
+    height: 15%;
+    /* text-align: 20px; */
+    /* overflow: scroll; */
+}
+
+.body {
+    width: 90%;
+    padding: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+    margin: 10px;
+    margin-left: 15px;
+    /* padding-right: 10px; */
+    /* margin-top: 5px; */
+    font-size: 12px;
+    color: rgb(165, 164, 164);
+}
+
+.priorityDiv {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    bottom: 10px;
+    left: 15px;
+}
+
+
+.priority {
+    margin: 0;
+    padding: 2px;
+    font-size: 12px;
+    /* padding-left: 15px; */
+
+}
+
+.low {
+    border: 2px solid rgb(167, 243, 123);
+    background: rgb(167, 243, 123);
+
+}
+
+.mid {
+    background: rgb(231, 243, 123);
+    border: 2px solid rgb(231, 243, 123);
+}
+
+.hight {
+    border: 2px solid rgb(243, 151, 123);
+    background: rgb(243, 151, 123);
+}
+
+.priorityStatus {
+    border-radius: 7px;
+    /* border: 1px solid rgb(89, 171, 226); */
+    /* height: 30px; */
+    line-height: 24px;
+    padding: 0 10px 0;
+    margin-left: 5px;
+    margin-right: 5px;
+    height: 24px;
+    margin: 0;
+    margin-left: 5px;
+    border-radius: 7px;
+    display: flex;
+}
+.index-for-body {
+    background-color: rgba(228, 228, 228, 0.336);
+    border-radius: 7px;
+    z-index: 60;
+    height: 50%;
+    white-space: normal;
+    overflow-y: scroll;
+}
+
+::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    /* box-shadow: inset 0 0 5px grey;  */
+    border-radius: 3px;
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: rgba(55, 82, 156, 0.247); 
+    border-radius: 3px;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(55, 82, 156); 
+  }
+
+.taskButtons {
+    display: flex;
+    position: absolute;
+    align-items: center;
+    bottom: 10px;
+    right: 10px;
+}
+.completeTask {
+    z-index: 50;
+    margin: 0 3px;
+    /* background: black; */
+    border-radius: 3px;
+    height: 20px;
+    width: 20px;
+    border: 2px solid white;
+}
+
+.deleteTask {
+    z-index: 50;
+    position: relative;
+    margin: 0 3px;
+    background: url(delete.png);
+    background-size: contain;
+    border-radius: 3px;
+    height: 20px;
+    width: 20px;
+    border: 2px solid white;
+}
+
+.changeTask {
+    background: url(edit.png);
+    background-size: contain;
+    z-index: 50;
+    /* background: black; */
+    /* border-radius: 7px; */
+    height: 20px;
+    width: 20px;
+    border: 2px solid white;
+}
+.zindex {
+    z-index: 20;
+}
+
+.completeTask input {
+    width: 100%;
+    height: 100%;
+}
+
+.completeTaskDiv {
+    /* display: none; */
+    /* border-radius: 9px; */
+    border: none;
+    color: transparent;
+    font-size: 30px;
+    /* line-height: 100px; */
+    text-align: center;
+    z-index: 30;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    /* background-color: rgba(0, 0, 0, 0.712); */
+    background-color: transparent;
+
+}
+.completeTaskDiv p {
+    line-height: 100px;
+    width: 100%;
+    margin: 0;
+    position: absolute;
+    height: 100%;
+}
+.completeTaskDiv:hover {
+    border: none;
+
+}
+
+.completedTaskDiv {
+    border-radius: 9px;
+    color: white;
+    background-color: rgba(104, 207, 78, 0.753);
+}
+
+.deleteModal {
+    position: absolute;
+    
+}

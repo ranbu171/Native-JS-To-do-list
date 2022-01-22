@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <title>To do Task</title>
+    <script src="https://kit.fontawesome.com/1cdd150d52.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <h1>To do List</h1>
@@ -13,10 +14,10 @@
         <h2 id="enterH2">Войти:</h2>
         <p id="enterMessage" style="display: none;">Логин или пароль внесены неверно.<br>Возможно, Вам необходимо пройти регистрацию!</p>
         <p id="wrongLogin" style="display: none;">Пользователь с таким именем уже существует</p>
+        <p id='wrongPassword' style="display: none;">Пароли не совпадают, попробуйте еще раз</p>
         <p id="successMessage" style="display: none;">Регистрация прошла успешно. <br>Выполните вход.</p>
         <input id='login' type="text" placeholder="Логин">
         <input id="password" type="password" placeholder="Пароль">
-        <p id='wrongPassword' style="display: none;">Пароли не совпадают, попробуйте еще раз</p>
         <input id="passwordTwo" type="password" placeholder="Повторите пароль" style="display: none;">
         <a id="registration" href="#">Регистрация</a>
         <div id='enterButtons'>

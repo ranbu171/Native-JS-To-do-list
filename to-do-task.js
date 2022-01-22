@@ -17,7 +17,14 @@ class Account {
 }
 
 
-// find registration objects 
+// find or create local base of accounts 
+if (!localStorage.getItem('accounts')) {
+    localStorage.setItem('accounts', JSON.stringify([]));
+}
+const accounts = JSON.parse(localStorage.getItem('accounts'));
+
+
+// find DOM objects to entering or registration modal
 const root = document.querySelector('#root');
 root.style.display ='none';
 const enterModal = document.querySelector('#enterModal');
@@ -30,10 +37,9 @@ const registrationA = document.querySelector('#registration');
 const enterButton = document.querySelector('#enter');
 const registration = document.querySelector('#create');
 const registrationBack = document.querySelector('#back');
-const registrationMessage = document.querySelector('#wrongPassword');
+const wrongPassword = document.querySelector('#wrongPassword');
 const wrongLogin = document.querySelector('#wrongLogin');
 const successMessage = document.querySelector('#successMessage');
-
 
 
 // listeners of registration|entering
@@ -42,12 +48,8 @@ enterButton.addEventListener('click', enterAccount);
 registration.addEventListener('click', createAccount);
 registrationBack.addEventListener('click', backToEnter);
 
-if (!localStorage.getItem('accounts')) {
-    localStorage.setItem('accounts', JSON.stringify([]));
-}
 
-const accounts = JSON.parse(localStorage.getItem('accounts'));
-// funtions 
+// funtions for registration or entering
 function showRegistration () {
     enterH2.innerText = 'Регистрация';
     enterMessage.style.display ='none';
@@ -58,7 +60,7 @@ function showRegistration () {
     registrationBack.style.display ='inline-block';
     registrationA.style.display = 'none';
     registrationPassword.style.display = 'inline-block';
-}
+};
 
 function backToEnter () {
     enterH2.innerText = 'Войти:';
@@ -70,9 +72,37 @@ function backToEnter () {
     registrationBack.style.display ='none';
     registrationA.style.display = 'inline-block';
     registrationPassword.style.display = 'none';
-    registrationMessage.style.display ='none';
     wrongLogin.style.display ='none';
-}
+    wrongPassword.style.display ='none';
+
+};
+
+function createAccount () {
+    for (let account of accounts){
+        if (!enterLogin.value){
+            return
+        }else if (account.name == enterLogin.value){
+            wrongLogin.style.display ='block';
+            wrongPassword.style.display = 'none'
+            enterLogin.value = '';
+        }else {
+        wrongLogin.style.display ='none';
+        }
+    }
+
+    if (!enterLogin.value || !enterPassword.value || !registrationPassword.value){
+        return
+    }else if (enterPassword.value == registrationPassword.value) {
+        accounts.push(new Account(Date.now()+accounts.length, enterLogin.value, enterPassword.value));
+        localStorage.accounts = JSON.stringify(accounts);
+        backToEnter();
+        successMessage.style.display ='block';
+    } else {
+        enterPassword.value = '';
+        registrationPassword.value ='';
+        wrongPassword.style.display ='block';
+    }
+};
 
 function enterAccount () {
     if (!enterLogin.value){
@@ -80,7 +110,7 @@ function enterAccount () {
     }else if (accounts.length == 0){
         enterMessage.style.display ='block';
 
-    } else {
+    }else {
         for (let account of accounts){
             if (account.name == enterLogin.value && account.password == enterPassword.value) {
                 root.style.display = 'grid';
@@ -95,63 +125,45 @@ function enterAccount () {
             enterPassword.value = '';
         }
     }
-}
+};
 
-function createAccount () {
-    for (let account of accounts){
-        if (!enterLogin.value){
-            return
-        }else if (account.name == enterLogin.value){
-            wrongLogin.style.display ='block';
-            enterLogin.value = '';
-        }
-    }
 
-    if (!enterLogin.value){
-        return
-    }else if (enterPassword.value == registrationPassword.value) {
-        accounts.push(new Account(Date.now()+accounts.length, enterLogin.value, enterPassword.value));
-        localStorage.accounts = JSON.stringify(accounts);
-
-        backToEnter();
-        successMessage.style.display ='block';
-    } else {
-        enterPassword.value = '';
-        registrationPassword.value ='';
-        registrationMessage.style.display ='block';
-    }
-}
    
 
+
+// function to running tasks app
 function showTasks (tasks) {
+
+    // checking localStorage
+    if (!localStorage.getItem(tasks)) {
+        localStorage.setItem(tasks, JSON.stringify([]));
+    };
+    const localTasks = JSON.parse(localStorage.getItem(tasks));
 
    // append function
    function append (parent, child) {
     parent.appendChild(child);
-    }
+    };
 
 
-    if (!localStorage.getItem(tasks)) {
-        localStorage.setItem(tasks, JSON.stringify([]));
-    }
-
-    const localTasks = JSON.parse(localStorage.getItem(tasks));
-
-    // taskCreater
+    // modal to create task 
     const taskCreaterContainer = document.createElement('div');
     taskCreaterContainer.className = 'taskCreaterContainer';
     taskCreaterContainer.style.display = 'none';
+    
     const taskCreater = document.createElement('div');
     taskCreater.className = 'taskCreater';
-    append (taskCreaterContainer, taskCreater);
 
     const taskCreaterH2 = document.createElement('h2');
     taskCreaterH2.innerText = 'Создать задачу:';
-    append(taskCreater, taskCreaterH2);
+
+    const taskCreaterP = document.createElement('p');
+    taskCreaterP.innerText = 'Название максимум 110 символов';
 
     const taskName = document.createElement('input');
     taskName.placeholder = 'Название задачи';
     taskName.className = 'taskName';
+
     const taskBody = document.createElement('textarea');
     taskBody.placeholder = 'Описание задачи(не обязательно)';
     taskBody.className = 'taskBody';
@@ -173,12 +185,7 @@ function showTasks (tasks) {
     const taskPriorityHight = document.createElement('option');
     taskPriorityHight.innerText = 'высокая';
 
-    append(taskPriority, taskPriorityLow);
-    append(taskPriority, taskPriorityMid);
-    append(taskPriority, taskPriorityHight);
-
-    append(taskPriorityDiv, taskPriorityP);
-    append(taskPriorityDiv, taskPriority);
+    
 
     // buttons
     const createTaskButton = document.createElement('button');
@@ -189,20 +196,10 @@ function showTasks (tasks) {
     const cancelCreateButton = document.createElement('button');
     cancelCreateButton.innerText = 'Отменить';
 
-    
-    // append in taskCreater
-    append(taskCreater, taskName);
-    append(taskCreater, taskBody);
-    append(taskCreater, taskPriorityDiv);
-    append(taskCreater, changeTaskButton);
-    append(taskCreater, createTaskButton);
-    append(taskCreater, cancelCreateButton);
-
 
     // button to create task 
     const buttonTaskCreater = document.createElement('div');
     const buttonTaskCreaterP = document.createElement('p');
-    append (buttonTaskCreater, buttonTaskCreaterP)
     buttonTaskCreater.style.display = 'flex';
     buttonTaskCreater.style.alignItems = 'center';
     buttonTaskCreater.style.justifyContent = 'center';
@@ -210,72 +207,78 @@ function showTasks (tasks) {
     buttonTaskCreaterP.innerText = '+';
     buttonTaskCreaterP.style.fontSize = '60px';
     buttonTaskCreaterP.style.color = 'rgb(145, 145, 145)';
+    
+    // appends
+    append (buttonTaskCreater, buttonTaskCreaterP);
 
+    append(taskPriority, taskPriorityLow);
+    append(taskPriority, taskPriorityMid);
+    append(taskPriority, taskPriorityHight);
+    
+    append(taskPriorityDiv, taskPriorityP);
+    append(taskPriorityDiv, taskPriority);
 
+    append(taskCreater, taskCreaterH2);
+    append(taskCreater, taskCreaterP);
+    append(taskCreater, taskName);
+    append(taskCreater, taskBody);
+    append(taskCreater, taskPriorityDiv);
+    append(taskCreater, changeTaskButton);
+    append(taskCreater, createTaskButton);
+    append(taskCreater, cancelCreateButton);
 
-    function showModal () {
-        changeTaskButton.style.display = 'none';
-        createTaskButton.style.display = 'inline-block';
-        taskCreaterContainer.style.display = 'block';
-       
-    }
-
-    function closeModal () {
-        taskCreaterH2.innerText = 'Создать задачу:';
-        taskCreaterContainer.style.display = 'none';
-        taskPriority.selectedIndex = '0';
-        taskName.value = '';
-        taskBody.value = '';
-    }
-
-    // listeners 
-    buttonTaskCreater.addEventListener('click', showModal);
-    changeTaskButton.addEventListener('click', saveChanges);
-    cancelCreateButton.addEventListener('click', closeModal);
-    createTaskButton.addEventListener('click', createTask);
+    append(taskCreaterContainer, taskCreater);
 
     // append into root 
     append(root, buttonTaskCreater);
     append(root, taskCreaterContainer);
 
-   
+    //objects to delete Task 
+    const deleteModal = document.getElementsByClassName('deleteModal')[0];
+    const deleteTaskButton = document.getElementsByClassName('deleteTaskButton')[0];
+    const cancelDeleteTask = document.getElementsByClassName('cancelDeleteTask')[0];
+
+    // listeners of enterind modal
+    buttonTaskCreater.addEventListener('click', showModal);
+    changeTaskButton.addEventListener('click', saveChanges);
+    cancelCreateButton.addEventListener('click', closeModal);
+    createTaskButton.addEventListener('click', createTask);
+    deleteTaskButton.addEventListener('click', deleteTaskFunc);
+    cancelDeleteTask.addEventListener('click', closeDeleteModal);
+
+
+
 
     // function to create taskform 
     function createTaskForm (taskList){
-        if (!taskList.name){
-            return;
-        }else {
+        
+        // create task
         const createTaskDiv = document.createElement('div');
-        const completeTaskDiv = document.createElement('div');
-        completeTaskDiv.className = 'gridBlock completeTaskDiv';
-        completeTaskDiv.addEventListener ('click', showTask);
-
-
-        append(createTaskDiv, completeTaskDiv);
         createTaskDiv.id = `div${taskList.id}`;
         createTaskDiv.className = 'gridBlock';
+
+        const completeTaskDiv = document.createElement('div');
+        completeTaskDiv.id = `complete${taskList.id}`
+        completeTaskDiv.className = 'gridBlock completeTaskDiv';
+
         const completeP = document.createElement('p');
         completeP.innerText ='Completed';
-        completeTaskDiv.append(completeP);
         completeP.style.display = 'none';
-        completeTaskDiv.id = `complete${taskList.id}`
-
 
         const createTaskName = document.createElement ('h2');
         createTaskName.className = 'name';
         createTaskName.id = `name${taskList.id}`;
-        createTaskName.innerText = `${taskList.name}`;
-        createTaskName.addEventListener('click', closeTask);
+        createTaskName.innerText = taskList.name;
 
         const createTaskBody = document.createElement ('p');
         createTaskBody.className = 'body';
         createTaskBody.id = `body${taskList.id}`;
+        createTaskBody.innerText = taskList.body;
 
-        createTaskBody.innerText = `${taskList.body}`;
-        createTaskBody.addEventListener('click', closeTask);
+
         const createTaskPriorityDiv = document.createElement ('div');
         createTaskPriorityDiv.className = 'priorityDiv';
-
+        
         const createTaskPriority = document.createElement ('p');
         createTaskPriority.innerText = 'Срочность:';
         createTaskPriority.style.display = 'inline-block';
@@ -284,9 +287,58 @@ function showTasks (tasks) {
         const createTaskPriorityStatus = document.createElement ('p');
         createTaskPriorityStatus.className = 'priorityStatus';
         createTaskPriorityStatus.style.display = 'inline-block';
-        createTaskPriorityStatus.innerText = `${taskList.priority}`;
-        createTaskPriorityStatus.id = `priority${taskList.id}`;
+        createTaskPriorityStatus.innerText = taskList.priority;
+        createTaskPriorityStatus.id = `priority${taskList.id}`; 
 
+        
+        const taskButtons = document.createElement ('div');
+        taskButtons.className ='taskButtons';
+
+        const completeTask = document.createElement ('div');
+        completeTask.className ='completeTask';
+
+        const completeTaskChecker = document.createElement ('input');
+        completeTaskChecker.type = 'checkbox';
+        completeTaskChecker.id = taskList.id;
+
+        const deleteTask = document.createElement ('i');
+        deleteTask.className = 'deleteTask fas fa-trash-alt';
+        deleteTask.id = taskList.id;
+
+        const changeTask = document.createElement ('i');
+        changeTask.className = 'changeTask fas fa-pencil-alt';
+        changeTask.id = taskList.id;
+
+        
+        // listeners
+        completeTaskDiv.addEventListener ('click', showTask);
+        createTaskName.addEventListener('click', closeTask);
+        createTaskBody.addEventListener('click', closeTask);
+        completeTaskChecker.addEventListener('click', completeFunction);
+        changeTask.addEventListener ('click', changeTaskFunc);
+        deleteTask.addEventListener('click', showDeleteModal);
+
+
+        // appends
+        append(completeTask, completeTaskChecker)
+        append(createTaskDiv, completeTaskDiv);
+        append(completeTaskDiv, completeP);
+        append(createTaskDiv, createTaskName);
+        append(createTaskDiv, createTaskBody);
+        append(createTaskPriorityDiv, createTaskPriority);
+        append(createTaskPriorityDiv, createTaskPriorityStatus);
+        append(createTaskDiv, taskButtons);
+        append(taskButtons, completeTask);
+        append(taskButtons, changeTask);
+        append(taskButtons, deleteTask);
+        append (createTaskDiv, createTaskPriorityDiv);
+
+
+        if (taskList.name.length > 30 || taskList.body.length > 45) {
+            completeTaskDiv.classList.add('pointer');
+        }else {
+            completeTaskDiv.classList.remove('pointer');
+        }
 
         if (taskList.priorityIndex == 0) {
             createTaskPriorityStatus.className ='priorityStatus low';
@@ -300,107 +352,83 @@ function showTasks (tasks) {
         }
 
 
-        const taskButtons = document.createElement ('div');
-        taskButtons.className ='taskButtons'
-        const completeTask = document.createElement ('div');
-        const completeTaskChecker = document.createElement ('input');
-        completeTask.append(completeTaskChecker);
-        completeTaskChecker.type = 'checkbox';
-        completeTaskChecker.id = taskList.id;
-
-        completeTask.className ='completeTask';
-        completeTaskChecker.addEventListener('click', completeFunction);
-
-        const deleteTask = document.createElement ('div');
-        deleteTask.className = 'deleteTask';
-        deleteTask.id = taskList.id;
-        deleteTask.addEventListener('click', showDeleteModal)
-
-        const changeTask = document.createElement ('div');
-        changeTask.className = 'changeTask';
-        changeTask.id = `${taskList.id}`;
-        changeTask.addEventListener ('click', changeTaskFunc)
-
-        append (createTaskDiv, createTaskName);
-        append (createTaskDiv, createTaskBody);
-        append (createTaskPriorityDiv, createTaskPriority);
-        append (createTaskPriorityDiv, createTaskPriorityStatus);
-        append (createTaskDiv, taskButtons);
-        append (taskButtons, completeTask);
-        append (taskButtons, changeTask);
-        append (taskButtons, deleteTask);
-        
-        append (createTaskDiv, createTaskPriorityDiv);
-
-
         root.prepend(createTaskDiv);
         closeModal();
-        }
-    }
+    };
 
-    // functions and objects to delete Task 
-
-    const deleteModal = document.getElementsByClassName('deleteModal')[0];
-    const deleteTaskButton = document.getElementsByClassName('deleteTaskButton')[0];
-    const cancelDeleteTask = document.getElementsByClassName('cancelDeleteTask')[0];
-    deleteTaskButton.addEventListener('click', deleteTaskFunc);
-    cancelDeleteTask.addEventListener('click', closeDeleteModal);
-
-    function showDeleteModal (e) {
-        deleteModal.style.display = 'block';
-        deleteTaskButton.id = e.target.id;
-    }
     
-    function closeDeleteModal () {
-        deleteModal.style.display = 'none';
-        deleteTaskButton.id = '';
-    }
 
-    function deleteTaskFunc (e) {
-        // console.log(localTasks);
-        const taskDelete = document.querySelector(`#div${e.target.id}`);
-        taskDelete.remove();
-        for (let all in localTasks){
-            if(localTasks[all].id == e.target.id){
-                localTasks.splice(all, 1)
-            }
-        }
-        // console.log(localTasks)
-        closeDeleteModal();
+    // all functions to work
+    function createTask () {
+        if (!taskName.value){
+            taskName.placeholder = 'Название задачи';
+            taskName.style.borderColor = 'rgb(89, 171, 226)';
+        } else if (taskName.value.length >= 110){
+            taskName.value = '';
+            taskName.placeholder = 'Слишком много символов';
+            taskName.style.borderColor = 'red';
+        }else {
+        const taskID = localTasks.length + Date.now();
+        localTasks.push(new Task(taskID, taskName.value, taskBody.value, taskPriority.options[taskPriority.selectedIndex].value, taskPriority.selectedIndex));
+        createTaskForm(localTasks[localTasks.length-1]);
         localStorage[tasks] = JSON.stringify(localTasks);
-    }
+        }
+    };
+
+    function showModal () {
+        changeTaskButton.style.display = 'none';
+        createTaskButton.style.display = 'inline-block';
+        taskCreaterContainer.style.display = 'block';
+       
+    };
+
+    function closeModal () {
+        taskCreaterH2.innerText = 'Создать задачу:';
+        taskCreaterContainer.style.display = 'none';
+        taskPriority.selectedIndex = '0';
+        taskName.value = '';
+        taskBody.value = '';
+        taskName.placeholder = 'Название задачи';
+        taskName.style.borderColor = 'rgb(89, 171, 226)';
+    };
+
+    function addPointer (div, name, body) {
+        if (name > 30 || body > 45) {
+            div.classList.add('pointer');
+        }else {
+            div.classList.remove('pointer');
+    
+        }
+    };
 
     function showTask(e) {
-        if(e.target.className.includes('completedTaskDiv') || e.target.offsetParent.children[2].innerText.length < 45 || e.target.offsetParent.children[1].innerText.length < 30){
-            return
-        } else {
-        
-            e.target.offsetParent.children[1].classList.add('name-actived');
-            e.target.offsetParent.children[2].classList.add('index-for-body');
-            // console.dir(e.target)
+        if(e.target.localName == 'p'){
+            return;
+        } else if(e.target.offsetParent.children[2].innerText.length > 45 || e.target.offsetParent.children[1].innerText.length > 30) {
+            e.target.offsetParent.children[1].classList.add('full-name');
+            e.target.offsetParent.children[2].classList.add('full-body');
             e.target.offsetParent.style.gridRow = 'span 2';
             e.target.style.display = 'none';
         }
-        }
+    };
 
     function closeTask (e) {
-        if (e.target.className.includes('index-for-body') || e.target.className.includes('name-actived')){
-            e.target.offsetParent.children[1].classList.remove('name-actived');
+        if (e.target.className.includes('full-body') || e.target.className.includes('full-name')){
+            e.target.offsetParent.children[1].classList.remove('full-name');
             e.target.offsetParent.children[0].style.display = 'block';
             e.target.offsetParent.style.gridRow = '';
-            e.target.offsetParent.children[2].classList.remove('index-for-body');
+            e.target.offsetParent.children[2].classList.remove('full-body');
 
         }
-    }
-
+    };
 
     function completeFunction (e) {
         if (e.target.checked){
            const completeDiv = document.querySelector(`#complete${e.target.id}`);
            completeDiv.style.display = 'block';
            completeDiv.offsetParent.style.gridRow = '';
-           completeDiv.offsetParent.children[1].classList.remove('name-actived');
-           completeDiv.offsetParent.children[2].classList.remove('index-for-body');
+           completeDiv.offsetParent.children[1].classList.remove('full-name');
+           completeDiv.offsetParent.children[2].classList.remove('full-body');
 
            completeDiv.classList.add('completedTaskDiv');
            const completeP = completeDiv.firstChild;
@@ -414,7 +442,6 @@ function showTasks (tasks) {
         } else {
             const completeDiv = document.querySelector(`#complete${e.target.id}`);
             completeDiv.classList.remove('completedTaskDiv');
-            console.dir(completeDiv)
            const completeP = completeDiv.firstChild;
             completeP.style.display = 'none';
            const changetasks = document.getElementsByClassName('changeTask');
@@ -426,17 +453,10 @@ function showTasks (tasks) {
             }
         }
 
-    }; 
+    };   
 
-    function createTask () {
-        const taskID = localTasks.length + Date.now();
-        localTasks.push(new Task(taskID, taskName.value, taskBody.value, taskPriority.options[taskPriority.selectedIndex].value, taskPriority.selectedIndex));
-        createTaskForm(localTasks[localTasks.length-1]);
-        localStorage[tasks] = JSON.stringify(localTasks);
-    }
-
-    function changeTaskFunc (element) {
-        const id = Number(element.target.id);
+    function changeTaskFunc (e) {
+        const id = Number(e.target.id);
         for (task of localTasks) {
             if(task.id == id){
                 taskCreaterH2.innerText = 'Изменить задачу:';
@@ -449,42 +469,82 @@ function showTasks (tasks) {
                 createTaskButton.style.display = 'none';
             }
         }
-    }
+    };
 
-    function saveChanges (element) {
-        const id = Number(element.target.id);
-        for (task of localTasks) {
-            if(task.id == id){
-                task.name = taskName.value;
-                task.body = taskBody.value;
-                task.priorityIndex = taskPriority.options.selectedIndex;
-                task.priority = taskPriority.options[taskPriority.selectedIndex].value;
-
-                const taskChangeName = document.querySelector(`#name${id}`);
-                taskChangeName.innerText = task.name;
-
-                const taskChangeBody = document.querySelector(`#body${id}`);
-                taskChangeBody.innerText = task.body;
-
-                const taskChangePriority = document.querySelector(`#priority${id}`);
-                taskChangePriority.innerText = task.priority;
-
-                const taskChangeDiv = document.querySelector (`#div${id}`);
-                if (task.priorityIndex == 0) {
-                    taskChangePriority.className ='priorityStatus low';
-                    taskChangeDiv.style.borderColor = 'rgb(167, 243, 123)';
-                } else if (task.priorityIndex == 1){
-                    taskChangePriority.className ='priorityStatus mid';
-                    taskChangeDiv.style.borderColor = 'rgb(231, 243, 123)';
-                }else if (task.priorityIndex == 2){
-                    taskChangePriority.className ='priorityStatus hight';
-                    taskChangeDiv.style.border = '2px solid rgb(243, 151, 123)';
+    function saveChanges (e) {
+        const id = Number(e.target.id);
+        if (!taskName.value){
+            taskName.placeholder = 'Название задачи';
+            taskName.style.borderColor = 'rgb(89, 171, 226)';
+        }else if (taskName.value.length >= 110){
+            taskName.value = '';
+            taskName.placeholder = 'Слишком много символов';
+            taskName.style.borderColor = 'red';
+        }else {
+            for (task of localTasks) {
+                if(task.id == id){
+                    task.name = taskName.value;
+                    task.body = taskBody.value;
+                    task.priorityIndex = taskPriority.options.selectedIndex;
+                    task.priority = taskPriority.options[taskPriority.selectedIndex].value;
+    
+                    const taskChangeName = document.querySelector(`#name${id}`);
+                    taskChangeName.innerText = task.name;
+    
+                    const taskChangeBody = document.querySelector(`#body${id}`);
+                    taskChangeBody.innerText = task.body;
+    
+                    const taskChangePriority = document.querySelector(`#priority${id}`);
+                    taskChangePriority.innerText = task.priority;
+    
+                    const taskChangeDiv = document.querySelector (`#div${id}`);
+    
+    
+                    if (task.priorityIndex == 0) {
+                        taskChangePriority.className ='priorityStatus low';
+                        taskChangeDiv.style.borderColor = 'rgb(167, 243, 123)';
+                    } else if (task.priorityIndex == 1){
+                        taskChangePriority.className ='priorityStatus mid';
+                        taskChangeDiv.style.borderColor = 'rgb(231, 243, 123)';
+                    }else if (task.priorityIndex == 2){
+                        taskChangePriority.className ='priorityStatus hight';
+                        taskChangeDiv.style.border = '2px solid rgb(243, 151, 123)';
+                    }
+    
+                    addPointer(taskChangeDiv.children[0], taskName.value.length, taskBody.value.length)
+                    closeModal ()
+                    localStorage[tasks] = JSON.stringify(localTasks);
                 }
-                closeModal ()
-                localStorage[tasks] = JSON.stringify(localTasks);
+        }
+        }
+
+
+
+        
+    };
+
+    function showDeleteModal (e) {
+        deleteModal.style.display = 'block';
+        deleteTaskButton.id = e.target.id;
+    };
+    
+    function closeDeleteModal () {
+        deleteModal.style.display = 'none';
+        deleteTaskButton.id = '';
+    };
+
+    function deleteTaskFunc (e) {
+        const taskDelete = document.querySelector(`#div${e.target.id}`);
+        taskDelete.remove();
+        for (let all in localTasks){
+            if(localTasks[all].id == e.target.id){
+                localTasks.splice(all, 1)
             }
-    }
-    }
+        }
+        closeDeleteModal();
+        localStorage[tasks] = JSON.stringify(localTasks);
+    };
+
     localTasks.forEach(createTaskForm);
 };
 

@@ -1,11 +1,12 @@
 // classes 
 class Task {
-    constructor(id, name, body, priority, priorityIndex) {
+    constructor(id, name, body, priority, priorityIndex, check = false) {
         this.id = id;
         this.name = name;
         this.body = body;
         this.priority = priority;
         this.priorityIndex = priorityIndex;
+        this.check = check;
     }
 }
 class Account {
@@ -41,13 +42,85 @@ const wrongPassword = document.querySelector('#wrongPassword');
 const wrongLogin = document.querySelector('#wrongLogin');
 const successMessage = document.querySelector('#successMessage');
 
+// find header and info elements 
+const headerLogin = document.querySelector('#nav');
+headerLogin.style.display = 'none';
+const headerLoginDiv = document.getElementsByClassName('login')[0];
+const headerUserName = document.querySelector('#userName');
+const headerUserExit = document.querySelector('#exit');
+const userNameButton = document.querySelector('#userNameButton');
 
-// listeners of registration|entering
+const info = document.querySelector('#info');
+const infoText = document.querySelector('#infoText');
+
+
+// listeners of registration|entering and header elements
 registrationA.addEventListener('click', showRegistration);
 enterButton.addEventListener('click', enterAccount);
 registration.addEventListener('click', createAccount);
 registrationBack.addEventListener('click', backToEnter);
 
+headerUserExit.addEventListener('click', exitLogin);
+
+if (window.matchMedia("(min-width: 750px)").matches){
+    info.addEventListener('mouseover', showInfo);
+    info.addEventListener('mouseout', closeInfo);
+    headerLoginDiv.addEventListener('mouseover', showExitButton);
+    headerLoginDiv.addEventListener('mouseout', closeExitButton);
+}else {
+    info.removeEventListener('mouseover', showInfo);
+    info.removeEventListener('mouseout', closeInfo);
+    headerLoginDiv.removeEventListener('mouseover', showExitButton);
+    headerLoginDiv.removeEventListener('mouseout', closeExitButton);
+    userNameButton.addEventListener('click', showLogin);
+    info.addEventListener('click', clickInfo);
+}
+
+// functions for login, exit and info
+function showLogin () {
+    if(!headerLoginDiv.className.includes('loginOpen')){
+        headerLoginDiv.classList.remove('loginClose');
+        headerLoginDiv.classList.add('loginOpen');
+    }else {
+        headerLoginDiv.classList.add('loginClose');
+        headerLoginDiv.classList.remove('loginOpen');
+    }
+}
+function showExitButton() {
+    headerUserExit.classList.remove('exitClose');
+    headerUserExit.classList.add('exitOpen');
+};
+function closeExitButton() {
+    headerUserExit.classList.add('exitClose');
+    headerUserExit.classList.remove('exitOpen');
+};
+function exitLogin () {
+    headerLoginDiv.classList.remove('loginOpen');
+    headerLogin.style.display ='none';
+    root.style.display = 'none';
+    enterModal.style.display ='block';
+    enterMessage.style.display = 'none';
+    while(!!root.firstChild) {root.removeChild(root.firstChild)};
+}
+
+// functions fot info
+function clickInfo () {
+    if(!infoText.className.includes('showInfo')){
+        showInfo();
+    }else {
+        closeInfo();
+    }
+}
+function showInfo(){
+    infoText.style.display = 'block';
+    infoText.classList.remove('closeInfo');
+    infoText.classList.add('showInfo');
+}
+function closeInfo(){
+    // infoText.style.display = 'none';
+    infoText.classList.add('closeInfo');
+    infoText.classList.remove('showInfo');
+}
 
 // funtions for registration or entering
 function showRegistration () {
@@ -113,6 +186,8 @@ function enterAccount () {
     }else {
         for (let account of accounts){
             if (account.name == enterLogin.value && account.password == enterPassword.value) {
+                headerLogin.style.display = 'flex';
+                headerUserName.innerText = enterLogin.value;
                 root.style.display = 'grid';
                 enterModal.style.display ='none';
                 showTasks(account.id);
@@ -158,7 +233,7 @@ function showTasks (tasks) {
     taskCreaterH2.innerText = 'Создать задачу:';
 
     const taskCreaterP = document.createElement('p');
-    taskCreaterP.innerText = 'Название максимум 110 символов';
+    taskCreaterP.innerText = 'Название максимум 90 символов';
 
     const taskName = document.createElement('input');
     taskName.placeholder = 'Название задачи';
@@ -188,6 +263,8 @@ function showTasks (tasks) {
     
 
     // buttons
+    const createTaskButtonDiv = document.createElement('div');
+    createTaskButtonDiv.className = 'buttons';
     const createTaskButton = document.createElement('button');
     createTaskButton.innerText = 'Создать задачу';
     const changeTaskButton = document.createElement('button');
@@ -195,6 +272,7 @@ function showTasks (tasks) {
     changeTaskButton.style.display = 'none';
     const cancelCreateButton = document.createElement('button');
     cancelCreateButton.innerText = 'Отменить';
+    cancelCreateButton.className ='back'
 
 
     // button to create task 
@@ -203,10 +281,10 @@ function showTasks (tasks) {
     buttonTaskCreater.style.display = 'flex';
     buttonTaskCreater.style.alignItems = 'center';
     buttonTaskCreater.style.justifyContent = 'center';
-    buttonTaskCreater.className = 'gridBlock';
+    buttonTaskCreater.className = 'gridBlock createNewTask';
     buttonTaskCreaterP.innerText = '+';
     buttonTaskCreaterP.style.fontSize = '60px';
-    buttonTaskCreaterP.style.color = 'rgb(145, 145, 145)';
+    buttonTaskCreaterP.style.color = 'white';
     
     // appends
     append (buttonTaskCreater, buttonTaskCreaterP);
@@ -223,9 +301,10 @@ function showTasks (tasks) {
     append(taskCreater, taskName);
     append(taskCreater, taskBody);
     append(taskCreater, taskPriorityDiv);
-    append(taskCreater, changeTaskButton);
-    append(taskCreater, createTaskButton);
-    append(taskCreater, cancelCreateButton);
+    append(taskCreater, createTaskButtonDiv)
+    append(createTaskButtonDiv, changeTaskButton);
+    append(createTaskButtonDiv, createTaskButton);
+    append(createTaskButtonDiv, cancelCreateButton);
 
     append(taskCreaterContainer, taskCreater);
 
@@ -251,7 +330,18 @@ function showTasks (tasks) {
 
     // function to create taskform 
     function createTaskForm (taskList){
-        
+
+        // some deals with \n of taskBody
+        const taskBodyValue = [...taskList.body];
+        const taskBodyCopiedValue = [...taskList.body];
+        let count = 0;
+        for (let all in taskBodyValue){
+            if (taskBodyValue[all] == '\n'){
+                taskBodyCopiedValue.splice(Number(all)+count, 0, " ")
+                count = count + 1;
+            }
+        }
+       
         // create task
         const createTaskDiv = document.createElement('div');
         createTaskDiv.id = `div${taskList.id}`;
@@ -273,7 +363,7 @@ function showTasks (tasks) {
         const createTaskBody = document.createElement ('p');
         createTaskBody.className = 'body';
         createTaskBody.id = `body${taskList.id}`;
-        createTaskBody.innerText = taskList.body;
+        createTaskBody.innerText = taskBodyCopiedValue.join('');
 
 
         const createTaskPriorityDiv = document.createElement ('div');
@@ -300,6 +390,11 @@ function showTasks (tasks) {
         const completeTaskChecker = document.createElement ('input');
         completeTaskChecker.type = 'checkbox';
         completeTaskChecker.id = taskList.id;
+
+           
+
+
+
 
         const deleteTask = document.createElement ('i');
         deleteTask.className = 'deleteTask fas fa-trash-alt';
@@ -334,7 +429,7 @@ function showTasks (tasks) {
         append (createTaskDiv, createTaskPriorityDiv);
 
 
-        if (taskList.name.length > 30 || taskList.body.length > 45) {
+        if (taskList.name.length > 30 || taskList.body.length > 45 || taskList.body.includes('\n')) {
             completeTaskDiv.classList.add('pointer');
         }else {
             completeTaskDiv.classList.remove('pointer');
@@ -342,16 +437,24 @@ function showTasks (tasks) {
 
         if (taskList.priorityIndex == 0) {
             createTaskPriorityStatus.className ='priorityStatus low';
-            createTaskDiv.style.borderColor = 'rgb(167, 243, 123)';
+            createTaskDiv.classList.add('gridBlockLow');
         } else if (taskList.priorityIndex == 1){
             createTaskPriorityStatus.className ='priorityStatus mid';
-            createTaskDiv.style.borderColor = 'rgb(231, 243, 123)';
+            createTaskDiv.classList.add('gridBlockMid');
         }else if (taskList.priorityIndex == 2){
             createTaskPriorityStatus.className ='priorityStatus hight';
-            createTaskDiv.style.border = '2px solid rgb(243, 151, 123)';
+            createTaskDiv.classList.add('gridBlockHight');
         }
 
-
+        // for check tasks
+        if (taskList.check){
+            deleteTask.classList.add('whiteDelete');
+            completeTaskDiv.classList.add('completedTaskDiv');
+            completeP.style.display = 'block';
+            changeTask.classList.add('zindex');
+            completeTaskChecker.checked = taskList.check;
+        }
+   
         root.prepend(createTaskDiv);
         closeModal();
     };
@@ -362,8 +465,8 @@ function showTasks (tasks) {
     function createTask () {
         if (!taskName.value){
             taskName.placeholder = 'Название задачи';
-            taskName.style.borderColor = 'rgb(89, 171, 226)';
-        } else if (taskName.value.length >= 110){
+            taskName.style.borderColor = 'rgb(143 28 173 / 65%)';
+        } else if (taskName.value.length >= 90){
             taskName.value = '';
             taskName.placeholder = 'Слишком много символов';
             taskName.style.borderColor = 'red';
@@ -372,6 +475,7 @@ function showTasks (tasks) {
         localTasks.push(new Task(taskID, taskName.value, taskBody.value, taskPriority.options[taskPriority.selectedIndex].value, taskPriority.selectedIndex));
         createTaskForm(localTasks[localTasks.length-1]);
         localStorage[tasks] = JSON.stringify(localTasks);
+        // console.dir(document.querySelector(`#div${taskID}`))
         }
     };
 
@@ -389,7 +493,7 @@ function showTasks (tasks) {
         taskName.value = '';
         taskBody.value = '';
         taskName.placeholder = 'Название задачи';
-        taskName.style.borderColor = 'rgb(89, 171, 226)';
+        taskName.style.borderColor = 'rgb(143 28 173 / 65%)';
     };
 
     function addPointer (div, name, body) {
@@ -404,10 +508,12 @@ function showTasks (tasks) {
     function showTask(e) {
         if(e.target.localName == 'p'){
             return;
-        } else if(e.target.offsetParent.children[2].innerText.length > 45 || e.target.offsetParent.children[1].innerText.length > 30) {
+        } else if(e.target.offsetParent.children[2].innerText.length > 45 || e.target.offsetParent.children[1].innerText.length > 30 || e.target.offsetParent.children[2].innerHTML.includes('<br>')) {
             e.target.offsetParent.children[1].classList.add('full-name');
             e.target.offsetParent.children[2].classList.add('full-body');
-            e.target.offsetParent.style.gridRow = 'span 2';
+            e.target.offsetParent.classList.add('gridBlockOpen');
+            e.target.offsetParent.classList.remove('gridBlockClose');
+
             e.target.style.display = 'none';
         }
     };
@@ -416,7 +522,8 @@ function showTasks (tasks) {
         if (e.target.className.includes('full-body') || e.target.className.includes('full-name')){
             e.target.offsetParent.children[1].classList.remove('full-name');
             e.target.offsetParent.children[0].style.display = 'block';
-            e.target.offsetParent.style.gridRow = '';
+            e.target.offsetParent.classList.remove('gridBlockOpen');
+            e.target.offsetParent.classList.add('gridBlockClose');
             e.target.offsetParent.children[2].classList.remove('full-body');
 
         }
@@ -424,31 +531,47 @@ function showTasks (tasks) {
 
     function completeFunction (e) {
         if (e.target.checked){
-           const completeDiv = document.querySelector(`#complete${e.target.id}`);
-           completeDiv.style.display = 'block';
-           completeDiv.offsetParent.style.gridRow = '';
-           completeDiv.offsetParent.children[1].classList.remove('full-name');
-           completeDiv.offsetParent.children[2].classList.remove('full-body');
+            e.target.offsetParent.children[2].classList.add('whiteDelete');
+            const completeDiv = document.querySelector(`#complete${e.target.id}`);
+            completeDiv.style.display = 'block';
+            if(completeDiv.offsetParent.className.includes('gridBlockOpen')){
+                completeDiv.offsetParent.classList.add('gridBlockClose');
+            }
+            completeDiv.offsetParent.classList.remove('gridBlockOpen');
+            completeDiv.offsetParent.children[1].classList.remove('full-name');
+            completeDiv.offsetParent.children[2].classList.remove('full-body');
 
-           completeDiv.classList.add('completedTaskDiv');
-           const completeP = completeDiv.firstChild;
-           completeP.style.display = 'block';
-           const changetasks = document.getElementsByClassName('changeTask');
-           for(changetask of changetasks){
+            completeDiv.classList.add('completedTaskDiv');
+            const completeP = completeDiv.firstChild;
+            completeP.style.display = 'block';
+            const changetasks = document.getElementsByClassName('changeTask');
+            for(changetask of changetasks){
                if(changetask.id == e.target.id){
                    changetask.classList.add('zindex');
                }
            }
+           for(localTask of localTasks){
+            if(localTask.id == e.target.id){
+                localTask.check = true;
+                localStorage[tasks] = JSON.stringify(localTasks);
+            }
+           }
         } else {
+            e.target.offsetParent.children[2].classList.remove('whiteDelete');
             const completeDiv = document.querySelector(`#complete${e.target.id}`);
             completeDiv.classList.remove('completedTaskDiv');
-           const completeP = completeDiv.firstChild;
+            const completeP = completeDiv.firstChild;
             completeP.style.display = 'none';
-           const changetasks = document.getElementsByClassName('changeTask');
+            const changetasks = document.getElementsByClassName('changeTask');
             for(changetask of changetasks){
                 if(changetask.id == e.target.id){
                     changetask.classList.remove('zindex');
-                    
+                }
+            }
+            for(localTask of localTasks){
+                if(localTask.id == e.target.id){
+                    localTask.check = false;
+                    localStorage[tasks] = JSON.stringify(localTasks);
                 }
             }
         }
@@ -475,8 +598,8 @@ function showTasks (tasks) {
         const id = Number(e.target.id);
         if (!taskName.value){
             taskName.placeholder = 'Название задачи';
-            taskName.style.borderColor = 'rgb(89, 171, 226)';
-        }else if (taskName.value.length >= 110){
+            taskName.style.borderColor = 'rgb(143 28 173 / 65%)';
+        }else if (taskName.value.length >= 90){
             taskName.value = '';
             taskName.placeholder = 'Слишком много символов';
             taskName.style.borderColor = 'red';
@@ -492,7 +615,16 @@ function showTasks (tasks) {
                     taskChangeName.innerText = task.name;
     
                     const taskChangeBody = document.querySelector(`#body${id}`);
-                    taskChangeBody.innerText = task.body;
+                    const taskChangeBodyValue = [...task.body];
+                    const taskChangeBodyCopiedValue = [...task.body];
+                    let count = 0;
+                    for (let all in taskChangeBodyValue){
+                        if (taskChangeBodyValue[all] == '\n'){
+                            taskChangeBodyCopiedValue.splice(Number(all)+count, 0, " ")
+                            count = count + 1;
+                        }
+                    }
+                    taskChangeBody.innerText = taskChangeBodyCopiedValue.join('');
     
                     const taskChangePriority = document.querySelector(`#priority${id}`);
                     taskChangePriority.innerText = task.priority;
@@ -502,13 +634,14 @@ function showTasks (tasks) {
     
                     if (task.priorityIndex == 0) {
                         taskChangePriority.className ='priorityStatus low';
-                        taskChangeDiv.style.borderColor = 'rgb(167, 243, 123)';
+                        taskChangeDiv.classList.add('gridBlockLow');
+
                     } else if (task.priorityIndex == 1){
                         taskChangePriority.className ='priorityStatus mid';
-                        taskChangeDiv.style.borderColor = 'rgb(231, 243, 123)';
+                        taskChangeDiv.classList.add('gridBlockMid');
                     }else if (task.priorityIndex == 2){
                         taskChangePriority.className ='priorityStatus hight';
-                        taskChangeDiv.style.border = '2px solid rgb(243, 151, 123)';
+                        taskChangeDiv.classList.add('gridBlockHight');
                     }
     
                     addPointer(taskChangeDiv.children[0], taskName.value.length, taskBody.value.length)
@@ -524,8 +657,14 @@ function showTasks (tasks) {
     };
 
     function showDeleteModal (e) {
+        console.dir(e)
         deleteModal.style.display = 'block';
         deleteTaskButton.id = e.target.id;
+        // console.log(deleteModal.children);
+        if(window.matchMedia("(min-width: 750px)").matches){
+            deleteModal.children[0].style.top = `${e.clientY-142}px`;
+            deleteModal.children[0].style.left = `${e.clientX-320}px`;
+        }
     };
     
     function closeDeleteModal () {

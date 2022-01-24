@@ -9,7 +9,23 @@
     <script src="https://kit.fontawesome.com/1cdd150d52.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <h1>To do List</h1>
+    <header>
+
+            <i class="fas fa-info-circle info" id='info'></i>
+            <p id='infoText'>В коде сайта намеренно использовались разные методы
+                обращения к DOM-элементам и методы их создания с целью практики возможностей JavaScript.</p>
+        </div>
+        <nav id="nav">
+        <i class="fas fa-user-circle" id="userNameButton"></i>
+        <div class="login">
+            <p id='userName'></p>
+            <p id='exit'>Выйти</p>
+        </div>
+        </nav>
+        
+        <h1>To do List</h1>
+    </header>
+    
     <div id='enterModal' class="taskCreater">
         <h2 id="enterH2">Войти:</h2>
         <p id="enterMessage" style="display: none;">Логин или пароль внесены неверно.<br>Возможно, Вам необходимо пройти регистрацию!</p>
@@ -20,18 +36,18 @@
         <input id="password" type="password" placeholder="Пароль">
         <input id="passwordTwo" type="password" placeholder="Повторите пароль" style="display: none;">
         <a id="registration" href="#">Регистрация</a>
-        <div id='enterButtons'>
+        <div id='enterButtons' class="buttons">
         <button id='enter'>Войти</button>
         <button id="create" style="display: none;">Зарегистрироваться</button>
-        <button id='back' style='display: none;'>Назад</button>
+        <button id='back' class="back" style='display: none;'>Назад</button>
         </div>
     </div>
     <div class="deleteModal taskCreaterContainer" style="display: none;">
-    <div class="taskCreater">
+    <div class="taskCreater deleteModalDiv">
         <h2>Вы уверены, что хотите удалить задачу?</h2>
-        <div>
+        <div class="buttons">
             <button class="deleteTaskButton">Удалить</button>
-            <button class="cancelDeleteTask">Отмена</button>
+            <button class="cancelDeleteTask back">Отмена</button>
         </div>
     </div>
 </div>

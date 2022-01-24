@@ -428,6 +428,9 @@ button:active {
 
 .full-body {
     background-color: rgba(228, 228, 228, 0.336);
+    word-wrap: break-word;
+    text-overflow: unset;
+    overflow: unset;
     margin-top: 10px;
     cursor: pointer;
     border-radius: 7px;

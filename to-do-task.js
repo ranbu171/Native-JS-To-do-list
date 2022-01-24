@@ -634,14 +634,21 @@ function showTasks (tasks) {
     
                     if (task.priorityIndex == 0) {
                         taskChangePriority.className ='priorityStatus low';
+                        taskChangeDiv.classList.remove('gridBlockHight');
+                        taskChangeDiv.classList.remove('gridBlockMid');
                         taskChangeDiv.classList.add('gridBlockLow');
 
                     } else if (task.priorityIndex == 1){
                         taskChangePriority.className ='priorityStatus mid';
                         taskChangeDiv.classList.add('gridBlockMid');
+                        taskChangeDiv.classList.remove('gridBlockLow');
+                        taskChangeDiv.classList.remove('gridBlockHight');
                     }else if (task.priorityIndex == 2){
                         taskChangePriority.className ='priorityStatus hight';
+                        taskChangeDiv.classList.remove('gridBlockLow');
                         taskChangeDiv.classList.add('gridBlockHight');
+                        taskChangeDiv.classList.remove('gridBlockMid');
+
                     }
     
                     addPointer(taskChangeDiv.children[0], taskName.value.length, taskBody.value.length)

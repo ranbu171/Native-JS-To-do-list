@@ -611,7 +611,7 @@ button:active {
 
 @media screen and (max-width: 750px) {
     .taskCreater {
-        margin: 50% auto;
+        margin: 30% auto;
         width: 80%;
     }
     .deleteModalDiv{
